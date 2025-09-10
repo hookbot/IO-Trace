@@ -4,4 +4,5 @@ MANIFEST
 README
 LICENSE
 lib/IO/Trace.pm
-t/IO-Trace.t
+t/01-compile-modules.t
+t/02-compile-scripts.t
