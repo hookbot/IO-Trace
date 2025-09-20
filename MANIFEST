@@ -7,3 +7,4 @@ lib/IO/Trace.pm
 hooks/iotrace
 t/01-compile-modules.t
 t/02-compile-scripts.t
+t/11-iotrace-usage.t
