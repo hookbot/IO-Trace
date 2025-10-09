@@ -1,0 +1,8 @@
+Changes
+Makefile.PL
+MANIFEST
+ppport.h
+README
+Trace.xs
+t/IO-Trace.t
+lib/IO/Trace.pm
