@@ -6,7 +6,7 @@
 use strict;
 use warnings;
 our (@filters, $test_points);
-use Test::More tests => 1 + (@filters = qw[hooks/iotrace strace]) * ($test_points = 8);
+use Test::More tests => 1 + (@filters = qw[iotrace strace]) * ($test_points = 8);
 use File::Temp ();
 
 my $run = "";
