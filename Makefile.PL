@@ -10,4 +10,14 @@ WriteMakefile(
     ABSTRACT_FROM     => 'lib/IO/Trace.pm', # retrieve abstract from module
     AUTHOR            => 'Rob Brown <bbb@cpan.org>',
     LICENSE           => 'artistic_2',
+    EXE_FILES         => [ 'bin/iotrace' ],
 );
+
+package MY;
+
+sub test {
+    my $inherited = shift->SUPER::test(@_);
+    my $sep = $^O eq 'MSWin32' ? ';' : ':';
+    $inherited =~ s{(\Q$(FULLPERLRUN)\E)}{PATH=\$(INST_SCRIPT)$sep\$(PATH) $1}g;
+    return $inherited;
+}

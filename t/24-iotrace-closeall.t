@@ -6,7 +6,7 @@
 use strict;
 use warnings;
 our (@filters, $test_points);
-use Test::More tests => 1 + (@filters = qw[none hooks/iotrace strace]) * ($test_points = 41);
+use Test::More tests => 1 + (@filters = qw[none iotrace strace]) * ($test_points = 41);
 use Errno qw(EPIPE);
 use File::Temp ();
 use POSIX qw(WNOHANG);

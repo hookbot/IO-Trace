@@ -6,7 +6,7 @@
 use strict;
 use warnings;
 our (@filters, $test_points, $test_option);
-use Test::More tests => 1 + (@filters = qw[hooks/iotrace strace]) * ($test_points = 5 * keys %{ $test_option = { none => "", single => "-q", double => "-q -q", bundled => "-qq", triple => "-qqq", "sillyquad" => "-qqqq"} });
+use Test::More tests => 1 + (@filters = qw[iotrace strace]) * ($test_points = 5 * keys %{ $test_option = { none => "", single => "-q", double => "-q -q", bundled => "-qq", triple => "-qqq", "sillyquad" => "-qqqq"} });
 use File::Temp ();
 
 my $run = "";
