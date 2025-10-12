@@ -10,4 +10,5 @@ WriteMakefile(
     ABSTRACT_FROM     => 'lib/IO/Trace.pm', # retrieve abstract from module
     AUTHOR            => 'Rob Brown <bbb@cpan.org>',
     LICENSE           => 'artistic_2',
+    EXE_FILES         => [ 'bin/iotrace' ],
 );

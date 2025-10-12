@@ -6,9 +6,10 @@
 use strict;
 use warnings;
 our (@filters, @test_exits, $test_points);
-use Test::More tests => 1 + (@filters = qw[none hooks/iotrace strace]) * ($test_points = 3 * (@test_exits = (0,1,2,7,22,111,255)));
+use Test::More tests => 1 + (@filters = qw[none iotrace strace]) * ($test_points = 3 * (@test_exits = (0,1,2,7,22,111,255)));
 use File::Temp ();
 
+$ENV{PATH} = "blib/script:$ENV{PATH}" if $ENV{PATH} !~ /^blib\/script:/;
 my $run = "";
 my $line = "";
 my $tmp = File::Temp->new( UNLINK => 1, SUFFIX => '.trace' );

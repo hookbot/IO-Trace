@@ -6,7 +6,7 @@
 use strict;
 use warnings;
 our (@filters, $test_points);
-use Test::More tests => 1 + (@filters = qw[none hooks/iotrace strace]) * ($test_points = 23);
+use Test::More tests => 1 + (@filters = qw[none iotrace strace]) * ($test_points = 23);
 use File::Temp ();
 use POSIX qw(WNOHANG);
 use IO::Handle;
@@ -25,6 +25,7 @@ my $test_prog = q{
     p;exit 0;                                #LineI
 };
 
+$ENV{PATH} = "blib/script:$ENV{PATH}" if $ENV{PATH} !~ /^blib\/script:/;
 eval { require Time::HiRes; };
 sub t { defined(\&Time::HiRes::time) ? sprintf("%10.6f",Time::HiRes::time()) : time() }
 
