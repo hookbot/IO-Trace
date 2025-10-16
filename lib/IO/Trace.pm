@@ -27,9 +27,6 @@ our @EXPORT = qw(
 
 our $VERSION = '0.021';
 
-require XSLoader;
-XSLoader::load('IO::Trace', $VERSION);
-
 # Preloaded methods go here.
 
 1;
