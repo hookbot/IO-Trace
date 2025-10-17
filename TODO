@@ -1,0 +1,8 @@
+TODO
+====
+
+Some desired features to implement or known issues to fix with iotrace:
+
+ - Redirecting to a file prematurely closes the file handle because it appears as can_read from the select loop for some reason.
+
+ - TTY terminal for STDIN breaks when open3 converts it to a pipe.
