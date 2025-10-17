@@ -1,6 +1,5 @@
-Revision history for Perl extension IO::Trace.
+Revision history for IO::Trace
 
-0.01  Thu Oct  9 15:17:12 2025
-	- original version; created by h2xs 1.23 with options
-		-b 5.6.0 -Afn IO::Trace
-
+0.01  2025-10-09 15:17:12
+ - original version; created by h2xs 1.23:
+   h2xs -b 5.6.0 -Afn IO::Trace
