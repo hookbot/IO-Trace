@@ -10,6 +10,7 @@ use Getopt::Long qw(GetOptions);
 use IPC::Open3 qw(open3);
 use IO::Select;
 use IO::Handle;
+use IO::Trace;
 
 Getopt::Long::Configure("require_order");
 Getopt::Long::Configure("bundling");
