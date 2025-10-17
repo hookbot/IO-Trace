@@ -3,81 +3,104 @@ package IO::Trace;
 use 5.006000;
 use strict;
 use warnings;
+use base qw(Exporter);
 
-require Exporter;
-
-our @ISA = qw(Exporter);
-
-# Items to export into callers namespace by default. Note: do not export
-# names by default without a very good reason. Use EXPORT_OK instead.
-# Do not simply export all your public functions/methods/constants.
-
-# This allows declaration	use IO::Trace ':all';
-# If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
-# will save memory.
-our %EXPORT_TAGS = ( 'all' => [ qw(
-	
-) ] );
-
-our @EXPORT_OK = ( @{ $EXPORT_TAGS{'all'} } );
-
-our @EXPORT = qw(
-	
-);
+our @EXPORT = qw(iotrace);
 
 our $VERSION = '0.021';
 
-# Preloaded methods go here.
+sub usage {
+    die "Usage> $0 -o <output_log> CMD [ARGS]\n";
+}
+
+sub iotrace {
+    my $context = wantarray;
+    exit if !defined $context;
+    my @args = @_ or usage;
+    die "Not implemented";
+}
 
 1;
 __END__
-# Below is stub documentation for your module. You'd better edit it!
 
 =head1 NAME
 
-IO::Trace - Perl extension for blah blah blah
+IO::Trace - Log I/O of an arbitrary process.
 
 =head1 SYNOPSIS
 
+  # Simple case:
   use IO::Trace;
-  blah blah blah
+  exit iotrace @ARGV;
+
+  # Advanced use:
+  use IO::Trace qw(iotrace);
+  my $exit_sort = iotrace qw[-f -v -s9000 -tt -e execve,clone,openat,close,read,write -o /tmp/sort.iotrace.log sort];
+  warn `wc /tmp/sort.iotrace.log`;
+  exit $exit_editor;
 
 =head1 DESCRIPTION
 
-Stub documentation for IO::Trace, created by h2xs. It looks like the
-author of the extension was negligent enough to leave the stub
-unedited.
+This utility is intended to be used to record STDIN STDOUT STDERR
+actvity (read,write,close) of an arbitrary command which it spawns.
+It does not alter any packets on the streams.
 
-Blah blah blah.
+The log file format is similar to Linux's strace utility but more
+platform-independent. So iotrace should work on Windows, MacOSX,
+GitBash, FreeBSD, Msys2, MinGW, Solaris, Cygwin, ChromeOS,
+as well as Linux.
 
-=head2 EXPORT
+This is implemented using IPC::Open3::open3 instead of Linux ptrace.
 
-None by default.
+=head1 CAVEATS
 
+It breaks terminal commands that rely on STDIN being a TTY because
+it is converted into a pipe.
 
+It will NOT log reads and writes to other files opened during
+the command execution, like strace does.
+It only logs STDIN, STDOUT, STDERR.
 
 =head1 SEE ALSO
 
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
+strace - Based on this commandline utility,
+but this only works on Linux platform.
 
-If you have a mailing list set up for your module, mention it here.
+Capture::Tiny - Similar in that it can log STDOUT and STDERR,
+but this is difficult to capture STDIN.
 
-If you have a web site set up for your module, mention it here.
+IPC::Run - Almost powerful enough to handle what I needed, but it
+couldn't handle detecting closed streams very gracefully, and the
+STDIN exponential backoff heartbeat CODE grinder is too sloppy.
 
 =head1 AUTHOR
 
 Rob Brown, E<lt>bbb@cpan.orgE<gt>
 
+=head1 DEVELOPMENT
+
+This module is maintained on github:
+
+https://github.com/hookbot/IO-Trace
+
+Report feature requests or bugs here:
+
+https://github.com/hookbot/IO-Trace/issues
+
+Pull requests welcome.
+
 =head1 COPYRIGHT AND LICENSE
 
 Copyright (C) 2025 by Rob Brown
 
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.34.1 or,
-at your option, any later version of Perl 5 you may have available.
+This library is free software; you can redistribute it and/or
+modify it under the terms of The Artistic License 2.0.
 
+=head1 DISCLAIMER
+
+Use at your own risk! The author will not be liable for any
+damages caused by misuse of this application nor any illegal
+monitoring or logging of any private communications or
+data packets or IO streams.
 
 =cut

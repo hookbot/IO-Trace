@@ -1,40 +1,69 @@
-IO-Trace version 0.01
-=====================
+NAME
+    IO::Trace - Log I/O of an arbitrary process.
 
-The README is used to introduce the module and provide instructions on
-how to install the module, any machine dependencies it may have (for
-example C compilers and installed libraries) and any other information
-that should be provided before the module is installed.
+SYNOPSIS
+      # Simple case:
+      use IO::Trace;
+      exit iotrace @ARGV;
 
-A README file is required for CPAN modules since CPAN extracts the
-README file from a module distribution so that people browsing the
-archive can use it get an idea of the modules uses. It is usually a
-good idea to provide version information here so that people can
-decide whether fixes for the module are worth downloading.
+      # Advanced use:
+      use IO::Trace qw(iotrace);
+      my $exit_sort = iotrace qw[-f -v -s9000 -tt -e execve,clone,openat,close,read,write -o /tmp/sort.iotrace.log sort];
+      warn `wc /tmp/sort.iotrace.log`;
+      exit $exit_editor;
 
-INSTALLATION
+DESCRIPTION
+    This utility is intended to be used to record STDIN STDOUT STDERR
+    actvity (read,write,close) of an arbitrary command which it spawns. It
+    does not alter any packets on the streams.
 
-To install this module type the following:
+    The log file format is similar to Linux's strace utility but more
+    platform-independent. So iotrace should work on Windows, MacOSX,
+    GitBash, FreeBSD, Msys2, MinGW, Solaris, Cygwin, ChromeOS, as well as
+    Linux.
 
-   perl Makefile.PL
-   make
-   make test
-   make install
+    This is implemented using IPC::Open3::open3 instead of Linux ptrace.
 
-DEPENDENCIES
+CAVEATS
+    It breaks terminal commands that rely on STDIN being a TTY because it is
+    converted into a pipe.
 
-This module requires these other modules and libraries:
+    It will NOT log reads and writes to other files opened during the
+    command execution, like strace does. It only logs STDIN, STDOUT, STDERR.
 
-  Test
+SEE ALSO
+    strace - Based on this commandline utility, but this only works on Linux
+    platform.
 
-COPYRIGHT AND LICENCE
+    Capture::Tiny - Similar in that it can log STDOUT and STDERR, but this
+    is difficult to capture STDIN.
 
-Put the correct copyright and licence information here.
+    IPC::Run - Almost powerful enough to handle what I needed, but it
+    couldn't handle detecting closed streams very gracefully, and the STDIN
+    exponential backoff heartbeat CODE grinder is too sloppy.
 
-Copyright (C) 2025 by Rob Brown
+AUTHOR
+    Rob Brown, <bbb@cpan.org>
 
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself, either Perl version 5.34.1 or,
-at your option, any later version of Perl 5 you may have available.
+DEVELOPMENT
+    This module is maintained on github:
 
+    https://github.com/hookbot/IO-Trace
+
+    Report feature requests or bugs here:
+
+    https://github.com/hookbot/IO-Trace/issues
+
+    Pull requests welcome.
+
+COPYRIGHT AND LICENSE
+    Copyright (C) 2025 by Rob Brown
+
+    This library is free software; you can redistribute it and/or modify it
+    under the terms of The Artistic License 2.0.
+
+DISCLAIMER
+    Use at your own risk! The author will not be liable for any damages
+    caused by misuse of this application nor any illegal monitoring or
+    logging of any private communications or data packets or IO streams.
 
