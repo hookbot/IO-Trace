@@ -78,7 +78,7 @@ SKIP: for my $try (@filters) {
     $pid = open3($in_fh, $out_fh, $err_fh, @run) or die "open3: FAILED! $!\n";
     ok($pid, t." $prog: spawned [pid=$pid] $!");
 
-    # If @run started properly, then its I/O should be writeable and readable
+    # If @run started properly, then its I/O should be writeable but not readable yet
     alarm 5;
     # Test #LineD: p (PAUSE for a second)
     ok(canwrite($in_fh),  t." $prog: TOP: STDIN is writeable: $!");
