@@ -12,12 +12,12 @@ use POSIX qw(WNOHANG);
 use IO::Handle;
 use IPC::Open3 qw(open3);
 
-# Test caller close STDIN (fd 0) behavior (Run 5 seconds)
+# Test caller close STDIN (fd 0) behavior (Run 6 seconds)
 my $test_prog = q{
     $|=1;                                    #LineA
     sub p{sleep 1}                           #LineB
     sub r{$_=<STDIN>//"(undef)";chomp;$_}    #LineC
-    p;r;                                     #LineD
+    r;                                       #LineD
     p;print "OUT-ONE:$_\n";                  #LineE
     p;r;                                     #LineF
     p;warn "ERR-TWO:$_\n";                   #LineG
@@ -77,7 +77,6 @@ SKIP: for my $try (@filters) {
 
     # If @run started properly, then its I/O should be writeable but not readable yet
     alarm 5;
-    # Test #LineD: p; (PAUSE for a second)
     ok(canwrite($in_fh),  t." $prog: TOP: STDIN is writeable: $!");
     ok(!canread($out_fh), t." $prog: TOP: STDOUT is empty so far: $!");
     ok(!canread($err_fh), t." $prog: TOP: STDERR is empty so far: $!");
@@ -87,14 +86,12 @@ SKIP: for my $try (@filters) {
     ok((print $in_fh "uno!\n"),t." $prog: line1");
     ok(close($in_fh), t." $prog: caller close STDIN: $!");
 
-    # Test #LineE: p (PAUSE for a second)
-    # STDOUT should still be empty
+    # Test #LineE: p (PAUSE for a second); ONE
+    # STDOUT should be empty for about a second waiting for the target to spawn up and read and sleep and echo back
     alarm 5;
     ok(!canread($out_fh), t." $prog: PRE: STDOUT is still empty: $!");
-
-    # Test #LineE: ONE
     alarm 5;
-    ok(canread($out_fh,2.8), t." $prog: PRE: STDOUT ready: $!");
+    ok(canread($out_fh,2.7), t." $prog: PRE: STDOUT ready: $!");
     alarm 5;
     chomp($line = <$out_fh>);
     ok($line, t." $prog: back1: $line");

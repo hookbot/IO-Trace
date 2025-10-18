@@ -89,12 +89,10 @@ SKIP: for my $try (@filters) {
     $in_fh->autoflush(1);
     ok((print $in_fh "uno!\n"),t." $prog: line1");
 
-    # Test #LineE: p (PAUSE for a second)
-    # STDOUT should still be empty
+    # Test #LineE: p (PAUSE for a second); ONE
+    # STDOUT should be empty for about a second waiting for the target to spawn up and read and sleep and echo back
     alarm 5;
     ok(!canread($out_fh), t." $prog: PRE: STDOUT is still empty: $!");
-
-    # Test #LineE: ONE
     alarm 5;
     ok(canread($out_fh,2.7), t." $prog: PRE: STDOUT ready: $!");
     alarm 5;

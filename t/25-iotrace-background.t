@@ -13,12 +13,12 @@ use POSIX qw(WNOHANG);
 use IO::Handle;
 use IPC::Open3 qw(open3);
 
-# Test if target will fork into background before closing all handles (Run 7 seconds)
+# Test if target will fork into background before closing all handles (Run 6 seconds)
 my $test_prog = q{
     $|=1;                                    #LineA
     sub p{sleep 1}                           #LineB
     sub r{$_=<STDIN>//"(undef)";chomp;$_}    #LineC
-    p;r;                                     #LineD
+    r;                                       #LineD
     p;print "OUT-ONE:$_\n";                  #LineE
     p;exit 0 if fork;                        #LineF
     p;r;close STDIN;                         #LineG
@@ -83,20 +83,19 @@ SKIP: for my $try (@filters) {
 
     # If @run started properly, then its I/O should be writeable but not readable yet
     alarm 5;
-    # Test #LineD: p;<STDIN>
+    # Test #LineD: <STDIN>
     ok(canwrite($in_fh),  t." $prog: TOP: STDIN is writeable: $!");
     ok(!canread($out_fh), t." $prog: TOP: STDOUT is empty so far: $!");
     ok(!canread($err_fh), t." $prog: TOP: STDERR is empty so far: $!");
     alarm 5;
     ok((print $in_fh "uno!\n"),t." $prog: line1");
 
-    # Test #LineE: p;OUT
-    # STDOUT should still be empty
+    # Test #LineE: p (PAUSE for a second); ONE
+    # STDOUT should be empty for about a second waiting for the target to spawn up and read and sleep and echo back
     alarm 5;
     ok(!canread($out_fh), t." $prog: PRE: STDOUT is still empty: $!");
     alarm 5;
-    # Wait for the other process to fire up the Perl interpreter and read my input and sleep and spit it back to me
-    ok(canread($out_fh,2.9), t." $prog: PRE: STDOUT ready: $!");
+    ok(canread($out_fh,2.7), t." $prog: PRE: STDOUT ready: $!");
     alarm 5;
     chomp($line = <$out_fh>);
     ok($line, t." $prog: back1: $line");
@@ -118,13 +117,8 @@ SKIP: for my $try (@filters) {
     ok((print $in_fh "dos!\n"),t." $prog: line2: $!");
     ok(!canread($in_fh),  t." $prog: STDIN still sleeping: $!");
 
-#    ok(!$!, t." $prog: MID: STDIN Still No Errno: $!");
-#    ok(!$got_piped, t." $prog: STDIN Not PIPED: $got_piped");
-
-    #ok(!$!, t." $prog: MID: STDIN No Errno: $!");
     # Quickly jam something into its STDIN while it's still open, but this should get lost.
-
-    # Test #LineH: p;OUT;close STDOUT
+    # Test #LineH: p;TWO;close STDOUT
     # STDOUT should still be empty
     alarm 5;
     ok(!canread($out_fh), t." $prog: MID: STDOUT still sleeping: $!");

@@ -13,12 +13,12 @@ use POSIX qw(WNOHANG);
 use IO::Handle;
 use IPC::Open3 qw(open3);
 
-# Test caller close STDERR (fd 2) behavior (Run 7 seconds)
+# Test caller close STDERR (fd 2) behavior (Run 6 seconds)
 my $test_prog = q{
     $|=1;$SIG{PIPE}=sub{print"PIPED!$!\n"};  #LineA
     sub p{sleep 1;$!=0}                      #LineB
     sub r{$_=<STDIN>//"(undef)";chomp;$_}    #LineC
-    p;r;                                     #LineD
+    r;                                       #LineD
     p;warn  "ERR-ONE:$_\n";                  #LineE
     p;warn  "ERR-TWO:$_\n";   $a=0+$!;$!=0;  #LineF
     p;warn  "ERR-THREE:$_\n"; $b=0+$!;$!=0;  #LineG
@@ -80,7 +80,6 @@ SKIP: for my $try (@filters) {
 
     # If @run started properly, then its I/O should be writeable but not readable yet
     alarm 5;
-    # Test #LineD: p (PAUSE for a second)
     ok(canwrite($in_fh),  t." $prog: TOP: STDIN is writeable: $!");
     ok(!canread($out_fh), t." $prog: TOP: STDOUT is empty so far: $!");
     ok(!canread($err_fh), t." $prog: TOP: STDERR is empty so far: $!");
@@ -90,10 +89,10 @@ SKIP: for my $try (@filters) {
     ok((print $in_fh "uno!\n"),t." $prog: line1");
 
     # Test #LineE: p (PAUSE for a second); ONE
-    # STDERR should still be empty
+    # STDERR should be empty for about a second waiting for the target to spawn up and read and sleep and echo back
     alarm 5;
     ok(!canread($err_fh),    t." $prog: PRE: STDERR is still empty: $!");
-    ok(canread($err_fh,2.8), t." $prog: PRE: STDERR ready: $!");
+    ok(canread($err_fh,2.7), t." $prog: PRE: STDERR ready: $!");
     alarm 5;
     chomp($line = <$err_fh>);
     ok($line, t." $prog: back1: $line");
