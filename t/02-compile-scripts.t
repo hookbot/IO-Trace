@@ -7,7 +7,7 @@ use strict;
 use warnings;
 
 use Test::More;
-my $perl_scripts = [ grep { `head -1 $_` =~ /perl/ } `cat MANIFEST` =~ m{^(?!lib/|t/)(.+)}gm ];
+my $perl_scripts = [ grep { `head -1 $_` =~ /perl/ } `cat MANIFEST` =~ m{^(?!lib/|t/)(\S+)}gm ];
 plan tests => 0+@$perl_scripts;
 foreach my $script (@$perl_scripts) {
     my $try = `$^X -c -Ilib $script 2>&1 | head`;
