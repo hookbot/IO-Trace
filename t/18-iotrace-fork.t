@@ -33,7 +33,7 @@ SKIP: for my $try (@filters) {
     ok(!!-s $tmp, "$prog: $tmp: Baby fork logged ".(-s $tmp)." bytes");
     $tmp->seek(0, 0); # SEEK_SET beginning
     chomp($line = <$tmp>);
-    like($line, qr/^\d+ execve/, "$prog: Baby fork: $line");
+    like($line, qr/^\d+\s+execve/, "$prog: Baby fork: $line");
     $tmp->seek(0, 0);
     $tmp->truncate(0);
     ok(!-s $tmp, "$prog: Baby fork log cleared");
