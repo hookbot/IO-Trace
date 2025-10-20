@@ -11,7 +11,7 @@ use IO::Handle;
 use IO::File qw(O_WRONLY O_TRUNC O_CREAT);
 
 our @EXPORT = qw(iotrace);
-our $VERSION = '0.022';
+our $VERSION = '0.023';
 
 # Magic Timer Settings
 our $has_hires = eval { require Time::HiRes; 1 };
