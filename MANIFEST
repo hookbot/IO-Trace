@@ -23,6 +23,7 @@ t/23-iotrace-implicit.t
 t/24-iotrace-closeall.t
 t/25-iotrace-background.t
 t/26-iotrace-redirect-0.t
+t/27-iotrace-redirect-1.t
 t/30-iotrace-caller-close-0.t
 t/31-iotrace-caller-close-1.t
 t/32-iotrace-caller-close-2.t
