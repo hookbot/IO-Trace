@@ -5,18 +5,18 @@
 
 use strict;
 use warnings;
-our (@filters, @sigs, $test_points);
+our (@filters, $test_points);
 use Test::More tests => 2 + (@filters = qw[none iotrace strace]) * ($test_points = 9);
 
 use File::Which qw(which);
 use File::Temp ();
 use IO::Handle;
 
-# Test behavior when redirecting STDIN from a file. Remove o's.
+# Test behavior when redirecting STDIN from a file. (Run 1 seconds)
 my $test_prog = q{
     $|=1;                                    #LineA
-    while (<STDIN>) {s/o//; print}           #LineB
-    exit 0;                                  #LineC
+    while (<STDIN>) {s/o//; print}           #LineB  # (Remove o's)
+    sleep 1;exit 0;                          #LineC
 };
 
 eval { require Time::HiRes; };
@@ -29,11 +29,11 @@ my $line = "";
 my $tmp = File::Temp->new( UNLINK => 1, SUFFIX => '.trace' );
 ok("$tmp", t." tracefile[$tmp]");
 my $redirect_file = File::Temp->new( UNLINK => 1, SUFFIX => '.txt' );
-ok("$redirect_file", t." redirectfile[$tmp]");
+ok("$redirect_file", t." redirect_in[$redirect_file]");
 
 SKIP: for my $prog (@filters) {
     my $try = $prog ne "none" ? which $prog : "n/a";
-    skip "no strace", 1 + (@sigs * $test_points) if $prog eq "strace" and !$try; # Skip strace tests if doesn't exist
+    skip "no strace", $test_points if $prog eq "strace" and !$try; # Skip strace tests if doesn't exist
     ok($try, t." $prog: Full path [$try]");
 
     # run case where STDIN is redirected from a file
