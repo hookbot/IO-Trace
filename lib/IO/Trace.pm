@@ -171,11 +171,11 @@ sub open_output_log {
     my $output_log_file = $self->{output_log_file};
     if (defined $output_log_file) {
         $output_log_file .= ".$self->{pid}" if $self->{follow_fork} > 1;
-        $self->{log} = IO::File->new($output_log_file, O_WRONLY | O_TRUNC | O_CREAT ) or die "$output_log_file: open failure: $!\n";;
+        $self->{log} = IO::File->new($output_log_file, O_WRONLY | O_TRUNC | O_CREAT ) or die "$output_log_file: open failure: $!\n";
     }
     else {
-        # XXX - Is it ok to spew all the trace lines out to STDERR if no -o option provided?
-        $self->{log} = IO::File->new(">&STDERR");
+        # Spew all the trace info mixed in with the normal STDERR stream if no -o option provided:
+        $self->{log} = IO::Handle->new_from_fd(fileno(STDERR), ">");
     }
     $self->{log}->autoflush(1);
     return $self->{log};
