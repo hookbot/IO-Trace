@@ -8,7 +8,7 @@ use Getopt::Long qw(GetOptionsFromArray Configure);
 use IPC::Open3 qw(open3);
 use IO::Select;
 use IO::Handle;
-use IO::File qw(O_WRONLY O_TRUNC O_CREAT);
+use IO::File qw(O_WRONLY O_TRUNC O_CREAT SEEK_CUR);
 
 our @EXPORT = qw(iotrace);
 our $VERSION = '0.023';
@@ -163,6 +163,15 @@ sub spawn {
     $self->{implicitly_closed} = {};
     $self->{sel} = IO::Select->new(values %{ $self->{proxy} });
     $self->{writers} = IO::Select->new($self->{in}, \*STDOUT, \*STDERR);
+    foreach my $fh ($self->{writers}->handles) {
+        # Test if writer handle is seek()able
+        if (seek $fh, 0, SEEK_CUR) { # Offset +0 from Current Position doesn't actually move the pointer
+            # YUP! Must be a real file. Don't monitor it since nobody will be able to close() the "other end" anyways.
+            # We must remove it from the Select loop to prevent super grinding since we always "can_read" a real file.
+            $self->{sel}->remove($fh);
+            $self->{writers}->remove($fh);
+        }
+    }
     return $self->{pid};
 }
 
