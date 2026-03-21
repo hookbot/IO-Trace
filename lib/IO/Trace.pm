@@ -4,7 +4,7 @@ use 5.006000;
 use strict;
 use warnings;
 use base qw(Exporter);
-use Getopt::Long qw(GetOptionsFromArray Configure);
+use Getopt::Long qw(GetOptions Configure);
 use IPC::Open3 qw(open3);
 use IO::Select;
 use IO::Handle;
@@ -52,10 +52,9 @@ sub new {
 
 sub parse_commandline {
     my $self = shift;
-    Configure("require_order");
-    Configure("bundling");
-    return GetOptionsFromArray
-        $self->{run} = \@_,
+    Configure(qw[require_order bundling]);
+    local @ARGV = @_;
+    my $ret = GetOptions
         "V"     => \($self->{version} = 0),
         "o=s"   => \($self->{output_log_file}),
         "v+"    => \($self->{verbose} = 0),
@@ -66,6 +65,9 @@ sub parse_commandline {
         "s=i"   => \($self->{size_of_strings}), # Ignored
         "e=s"   => \($self->{events}),  # Ignored
         "help|h"=> \($self->{help}),
+        ;
+    $self->{run} = [@ARGV];
+    return $ret;
 }
 
 sub t {
