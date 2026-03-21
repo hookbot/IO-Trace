@@ -33,6 +33,7 @@ sub iotrace {
     my @args = @_ ? @_ : @ARGV or die usage; # No args is Error
     $self->parse_commandline(@args) or die usage; # Broken args parsing is Error
     $self->{help} and print usage and exit; # Showing --help usage is not Error
+    $self->{version} and print "iotrace -- version $VERSION\n" and exit; # Show version
     $self->{child_died} = 0;
     local $SIG{CHLD} = sub { $self->{child_died} = now; };
     $self->run_trace;
@@ -55,6 +56,7 @@ sub parse_commandline {
     Configure("bundling");
     return GetOptionsFromArray
         $self->{run} = \@_,
+        "V"     => \($self->{version} = 0),
         "o=s"   => \($self->{output_log_file}),
         "v+"    => \($self->{verbose} = 0),
         "x+"    => \($self->{heX_ify} = 0),
