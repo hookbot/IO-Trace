@@ -151,7 +151,7 @@ sub spawn {
     # open3 can't vivify STDERR from undef for some reason
     my @r = @{ $self->{run} };
     $r[0] = $full if $full;
-    $self->{full} = $full // $r[0];
+    $self->{full} = $full || $r[0];
     # Launch target program
     $self->{pid} = open3 $self->{in}, $self->{out}, $self->{err}, @r or die "$r[0]: fork exec failure: $!\n";
     # Map each handle to its corresponding handle
@@ -204,7 +204,7 @@ sub io_loop {
             $patience_idle;
         my @ready = $self->{sel}->count ? $self->{sel}->can_read($maximum_timeout) : do {select undef,undef,undef, $maximum_timeout; ()};
         foreach my $fh (@ready) {
-            my $fn = fileno($fh) // next;
+            defined(my $fn = fileno $fh) || next;
             my $pr = $self->{proxy}->{$fn} or die "Fileno $fn: Impossible Implementation Crash! $!\n";;
             # Find original fileno (STDIN=0, STDOUT=1, STDERR=2):
             my $real_fileno = $fn < 3 ? $fn : fileno($pr);
