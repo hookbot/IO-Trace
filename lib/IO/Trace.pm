@@ -297,6 +297,7 @@ sub finish_child {
         my $sig_name = eval { require Config; %Config::Config and [split / /, $Config::Config{sig_name}]->[$signal] } || $signal;
         $self->log("--- GOT SIG$sig_name ($signal) ---");
     }
+    $self->log("exit_group($child_exit_status) = ?");
     $self->log("+++ exited with $child_exit_status +++");
     $self->{log}->close;
     return $child_exit_status;
