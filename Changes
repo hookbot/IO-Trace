@@ -1,5 +1,8 @@
 Revision history for IO::Trace
 
+0.024 2026-03-20 20:00:00
+ - closer to strace 4.5.18
+
 0.023 2025-10-22 20:00:00
  - Allow redirecting to a file
 
