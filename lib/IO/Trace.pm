@@ -34,6 +34,7 @@ sub iotrace {
     $self->parse_commandline(@args) or die usage; # Broken args parsing is Error
     $self->{help} and print usage and exit; # Showing --help usage is not Error
     $self->{version} and print "iotrace -- version $VERSION\n" and exit; # Show version
+    @{$self->{run}} or exit print usage; # No CMD is Error
     $self->{child_died} = 0;
     local $SIG{CHLD} = sub { $self->{child_died} = now; };
     $self->run_trace;
